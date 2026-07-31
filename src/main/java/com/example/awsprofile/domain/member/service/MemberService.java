@@ -22,4 +22,11 @@ public class MemberService {
 
         memberRepository.save(member);
     }
+
+    public MemberResponse findMember(Long id) {
+        Member found = memberRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("해당 id의 팀원을 찾을 수 없습니다."));
+
+        return MemberResponse.from(found);
+    }
 }

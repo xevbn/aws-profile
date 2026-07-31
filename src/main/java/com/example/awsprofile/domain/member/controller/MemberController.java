@@ -22,4 +22,11 @@ public class MemberController {
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<MemberResponse> getAllMembers(@PathVariable long id) {
+        MemberResponse res =  memberService.findMember(id);
+
+        return ResponseEntity.ok(res);
+    }
 }
