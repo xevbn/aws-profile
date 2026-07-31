@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/members")
+@LogExecution
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberService memberService;
