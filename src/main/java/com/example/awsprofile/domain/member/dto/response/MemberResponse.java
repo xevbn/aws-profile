@@ -1,4 +1,4 @@
-package com.example.awsprofile.domain.member.dto;
+package com.example.awsprofile.domain.member.dto.response;
 
 import com.example.awsprofile.domain.member.entity.Member;
 import jakarta.annotation.Nullable;

@@ -1,8 +1,7 @@
 package com.example.awsprofile.domain.member.controller;
 
-import com.example.awsprofile.domain.member.controller.MemberController;
-import com.example.awsprofile.domain.member.dto.MemberCreateRequest;
-import com.example.awsprofile.domain.member.dto.MemberResponse;
+import com.example.awsprofile.domain.member.dto.request.MemberCreateRequest;
+import com.example.awsprofile.domain.member.dto.response.MemberResponse;
 import com.example.awsprofile.domain.member.service.MemberService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

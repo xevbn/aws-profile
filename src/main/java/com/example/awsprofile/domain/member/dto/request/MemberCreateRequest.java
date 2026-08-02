@@ -1,4 +1,4 @@
-package com.example.awsprofile.domain.member.dto;
+package com.example.awsprofile.domain.member.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

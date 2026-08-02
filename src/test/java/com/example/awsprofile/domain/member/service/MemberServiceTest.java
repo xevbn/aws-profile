@@ -1,8 +1,8 @@
 package com.example.awsprofile.domain.member.service;
 
 import com.example.awsprofile.domain.common.exception.NotFoundException;
-import com.example.awsprofile.domain.member.dto.MemberCreateRequest;
-import com.example.awsprofile.domain.member.dto.MemberResponse;
+import com.example.awsprofile.domain.member.dto.request.MemberCreateRequest;
+import com.example.awsprofile.domain.member.dto.response.MemberResponse;
 import com.example.awsprofile.domain.member.entity.Member;
 import com.example.awsprofile.domain.member.repository.MemberRepository;
 import com.example.awsprofile.domain.member.MemberFixture;
