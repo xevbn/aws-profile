@@ -44,6 +44,16 @@ MYSQL (AWS RDS)
 
 ---
 
+## LV. 1 - EC2 public ip 
+
+3.39.253.248
+
+## LV. 2
+
+1. actuator info url: http://3.39.253.248:8080/actuator/info
+
+2. RDS security group
+    ![rds_sg.png](docs/rds_sg.png)
 
 ## 트러블슈팅
 
