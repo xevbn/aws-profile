@@ -26,6 +26,9 @@ spring:
       hibernate:
         format_sql: true
 
+  profiles:
+    default: test
+
 logging:
   level:
     org.springframework.boot: info
