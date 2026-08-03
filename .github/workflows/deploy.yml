@@ -2,9 +2,9 @@ name: CI CD Pipeline
 
 on:
   push:
-    branches: [main]
+    branches: [main, ci-cd]
   pull_request:
-    branches: [main]
+    branches: [main, ci-cd]
 
 permissions:
   id-token: write
