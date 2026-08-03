@@ -1,14 +1,16 @@
 package com.example.awsprofile.domain.member.controller;
 
 import com.example.awsprofile.domain.common.annotation.LogExecution;
-import com.example.awsprofile.domain.member.dto.MemberCreateRequest;
-import com.example.awsprofile.domain.member.dto.MemberResponse;
+import com.example.awsprofile.domain.member.dto.request.MemberCreateRequest;
+import com.example.awsprofile.domain.member.dto.response.MemberResponse;
+import com.example.awsprofile.domain.member.dto.response.ProfileImageResponse;
 import com.example.awsprofile.domain.member.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/members")
@@ -29,5 +31,12 @@ public class MemberController {
         MemberResponse res =  memberService.findMember(id);
 
         return ResponseEntity.ok(res);
+    }
+
+    @PostMapping("/{id}/profile-image")
+    public ResponseEntity<Void> saveProfileImage(@PathVariable long id, @RequestParam("file") MultipartFile file) {
+        memberService.saveProfile(id, file);
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

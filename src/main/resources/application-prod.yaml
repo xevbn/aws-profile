@@ -6,6 +6,15 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   config:
     import: aws-parameterstore:/profile-app/prod/
+  servlet:
+    multipart:
+      max-file-size: 10MB
+  cloud:
+    aws:
+      region:
+        static: ap-northeast-2
+      s3:
+        bucket: ${S3_BUCKET}
 
   jpa:
     hibernate:

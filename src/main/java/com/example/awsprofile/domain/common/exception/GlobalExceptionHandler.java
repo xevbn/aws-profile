@@ -1,13 +1,13 @@
 package com.example.awsprofile.domain.common.exception;
 
+import io.awspring.cloud.s3.S3Exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import java.util.Arrays;
+import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 
 @RestControllerAdvice
 @Slf4j
@@ -25,6 +25,20 @@ public class GlobalExceptionHandler {
         log.error("[ERROR]: {}", e.getMessage(), e);
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(ErrorResponse.of(HttpStatus.NOT_FOUND, e.getMessage()));
+    }
+
+    @ExceptionHandler(NoSuchKeyException.class)
+    public ResponseEntity<ErrorResponse> handleNoSuchKeyException(NoSuchKeyException e) {
+        log.error("[ERROR]: {}", e.getMessage(), e);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ErrorResponse.of(HttpStatus.NOT_FOUND, e.getMessage()));
+    }
+
+    @ExceptionHandler(S3Exception.class)
+    public ResponseEntity<ErrorResponse> handleS3IOException(S3Exception e) {
+        log.error("[ERROR]: {}", e.getMessage(), e);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ErrorResponse.of(HttpStatus.INTERNAL_SERVER_ERROR, "S3 연동 오류"));
     }
 
     @ExceptionHandler(Exception.class)
