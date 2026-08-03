@@ -39,4 +39,11 @@ public class MemberController {
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+    @GetMapping("/{id}/profile-image")
+    public ResponseEntity<ProfileImageResponse> getProfileImage(@PathVariable long id) {
+        ProfileImageResponse resBody = memberService.getProfileUrl(id);
+
+        return ResponseEntity.ok(resBody);
+    }
 }

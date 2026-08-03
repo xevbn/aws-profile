@@ -31,4 +31,8 @@ public class S3Service {
             throw new FileUploadException("S3 파일 업로드 중 오류가 발생했습니다. 파일명: " + file.getOriginalFilename());
         }
     }
+
+    public URL download(String key) {
+        return s3Template.createSignedGetURL(bucket, key, PRESIGNED_URL_EXPIRATION);
+    }
 }

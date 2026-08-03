@@ -1,4 +1,8 @@
 package com.example.awsprofile.domain.member.dto.response;
 
-public record ProfileDownloadResponse() {
+import java.net.URL;
+
+public record ProfileImageResponse(
+        URL profileImageURL
+) {
 }

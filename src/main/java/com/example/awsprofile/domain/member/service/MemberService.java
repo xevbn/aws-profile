@@ -3,6 +3,7 @@ package com.example.awsprofile.domain.member.service;
 import com.example.awsprofile.domain.common.exception.NotFoundException;
 import com.example.awsprofile.domain.member.dto.request.MemberCreateRequest;
 import com.example.awsprofile.domain.member.dto.response.MemberResponse;
+import com.example.awsprofile.domain.member.dto.response.ProfileImageResponse;
 import com.example.awsprofile.domain.member.entity.Member;
 import com.example.awsprofile.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,13 @@ public class MemberService {
         found.saveProfile(key);
 
         memberRepository.save(found);
+    }
+
+    public ProfileImageResponse getProfileUrl(Long id) {
+        Member found = getMember(id);
+        String key = found.getProfile();
+
+        return new ProfileImageResponse(s3Service.download(key));
     }
 
     private Member getMember(Long id) {
