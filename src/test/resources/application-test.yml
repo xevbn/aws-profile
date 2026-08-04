@@ -29,6 +29,10 @@ spring:
   profiles:
     default: test
 
+info:
+  app:
+    message: hello
+
 logging:
   level:
     org.springframework.boot: info
