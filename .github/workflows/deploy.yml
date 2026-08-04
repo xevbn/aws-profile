@@ -100,18 +100,13 @@ jobs:
         run: |
           # 변수 COMMAND_ID에 저장
           COMMAND_ID=$(aws ssm send-command \
-            --instance-ids ${{ secrets.AWS_EC2_ID }} \
+            --instance-ids "${{ secrets.AWS_EC2_ID }}" \
             --document-name "AWS-RunShellScript" \
             --parameters 'commands=[
               "docker pull ${{ secrets.DOCKERHUB_USERNAME }}/my-app:latest",
               "docker stop my-app-container || true",
               "docker rm my-app-container || true",
-              "docker run -d \
-                --restart unless-stopped \
-                --name my-app-container \
-                -p 8080:8080 \
-                -e SPRING_PROFILES_ACTIVE=prod \
-                ${{ secrets.DOCKERHUB_USERNAME }}/my-app:latest",
+              "docker run -d --restart unless-stopped --name my-app-container -p 8080:8080 -e SPRING_PROFILES_ACTIVE=prod ${{ secrets.DOCKERHUB_USERNAME }}/my-app:latest",
               "docker image prune -f"
             ]' \
             --query "Command.CommandId" \
