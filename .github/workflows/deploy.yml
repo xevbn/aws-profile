@@ -73,6 +73,7 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/my-app:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/my-app:${{ github.sha }}
+          platforms: linux/arm64, linux/amd64
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -97,7 +98,8 @@ jobs:
       # SSM으로 EC2에 배포
       - name: Deploy to EC2 via SSM
         run: |
-          aws ssm send-command \
+          # 변수 COMMAND_ID에 저장
+          COMMAND_ID=$(aws ssm send-command \
             --instance-ids ${{ secrets.AWS_EC2_ID }} \
             --document-name "AWS-RunShellScript" \
             --parameters 'commands=[
@@ -106,4 +108,20 @@ jobs:
               "docker rm my-app-container || true",
               "docker run -d --name my-app-container -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/my-app:latest",
               "docker image prune -f"
-            ]'
+            ]' \
+            --query "Command.CommandId" \
+            --output text)
+          
+          echo "Command ID: $COMMAND_ID"
+          
+          # 명령어가 끝날 때까지 대기
+          aws ssm wait command-executed \
+            --instance-id "${{ secrets.AWS_EC2_ID }}" \
+            --command-id "$COMMAND_ID"
+          
+          # 실행 결과를 터미널에 출력
+          aws ssm get-command-invocation \
+            --instance-id "${{ secrets.AWS_EC2_ID }}" \
+            --command-id "$COMMAND_ID"
+            --query "${Status: Status, Output: StandardOutputContent, Error: StandardErrorContent}" \
+            --output json
