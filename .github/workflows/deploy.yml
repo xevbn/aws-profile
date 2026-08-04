@@ -110,7 +110,7 @@ jobs:
                 --restart unless-stopped \
                 --name my-app-container \
                 -p 8080:8080 \
-                -e SPRING_PROFILES_ACTIVE= prod \
+                -e SPRING_PROFILES_ACTIVE=prod \
                 ${{ secrets.DOCKERHUB_USERNAME }}/my-app:latest",
               "docker image prune -f"
             ]' \
