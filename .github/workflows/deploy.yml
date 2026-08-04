@@ -50,7 +50,7 @@ jobs:
 
       # 6. 테스트 실행
       - name: Run tests
-        run: ./gradlew test
+        run: ./gradlew test --stacktrace
 
       # 7. JAR 빌드
       - name: Build JAR
