@@ -16,6 +16,9 @@ spring:
         static: ap-northeast-2
       s3:
         bucket: dummy-bucket
+      credentials:
+        access-key: dummy
+        secret-key: dummy
 
   jpa:
     hibernate:
