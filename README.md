@@ -55,6 +55,19 @@ MYSQL (AWS RDS)
 2. RDS security group
     ![rds_sg.png](docs/rds_sg.png)
 
+## LV. 3 - Presigned URL
+
+## LV. 4
+
+1. CI/CD 성공
+
+![img_1.png](docs/ci-cd.png)
+
+
+2. Docker 실행 화면
+
+![img.png](docs/docker.png)
+
 ## 트러블슈팅
 
 ### 문제 사항 기술
@@ -62,3 +75,20 @@ MYSQL (AWS RDS)
 - **문제**:
 - **원인**: 
 - **해결**: 
+
+memo
+
+ci/cd 테스트 중에 빌드 문제 발생
+1. S3 관련 자동 구성에서 발생
+    - test 환경 구성을 만들어 해결 시도: 실패
+    - AwsProfileApplicationTests 클래스에서 @EnableAutoConfiguration(exclude={S3AutoConfiguration.class})로 S3 자동 구성 제외: 해결
+2. OIDC 문제
+    - OIDC 발급 및 역할 추가 및 설정
+    - ec2 IAM ROLE에 SSM 설정이 없었음
+    - AmazonSSMManagedInstanceCore 정책 추가 및 github actions의 oidc에 부여한 역할에 정책 추가
+3. Docker 이미지 빌드 문제
+    - Docker에 설정을 하지 않을 시 호스트 머신의 아키텍처를 그대로 따라감
+    - AWS EC2는 ARM64 아키텍처, 호스트는 AMD64 아키텍처로 상이함
+    - 빌드 옵션에 ARM64, AMD64 아키텍처 전부 가능하도록 설정
+4. 배포 과정에서 명령어 결과 확인 불가
+   - CD에 명령어 추가
