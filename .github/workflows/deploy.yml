@@ -123,5 +123,5 @@ jobs:
           aws ssm get-command-invocation \
             --instance-id "${{ secrets.AWS_EC2_ID }}" \
             --command-id "$COMMAND_ID"
-            --query "${Status: Status, Output: StandardOutputContent, Error: StandardErrorContent}" \
+            --query "{Status: Status, Output: StandardOutputContent, Error: StandardErrorContent}" \
             --output json
