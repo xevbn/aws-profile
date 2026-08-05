@@ -79,7 +79,6 @@ jobs:
 
   deploy:
     needs: build
-    # 조건문 오류 수정: 앞쪽 슬래시 제거
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
@@ -95,33 +94,17 @@ jobs:
           role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
           aws-region: ${{ vars.AWS_REGION }}
 
-      # SSM으로 EC2에 배포
-      - name: Deploy to EC2 via SSM
+      # Parameter store의 이미지 태그 수정
+      - name: Update image tag
         run: |
-          # 변수 COMMAND_ID에 저장
-          COMMAND_ID=$(aws ssm send-command \
-            --instance-ids "${{ secrets.AWS_EC2_ID }}" \
-            --document-name "AWS-RunShellScript" \
-            --parameters 'commands=[
-              "docker pull ${{ secrets.DOCKERHUB_USERNAME }}/my-app:latest",
-              "docker stop my-app-container || true",
-              "docker rm my-app-container || true",
-              "docker run -d --restart unless-stopped --name my-app-container -p 8080:8080 -e SPRING_PROFILES_ACTIVE=prod ${{ secrets.DOCKERHUB_USERNAME }}/my-app:latest",
-              "docker image prune -f"
-            ]' \
-            --query "Command.CommandId" \
-            --output text)
-          
-          echo "Command ID: $COMMAND_ID"
-          
-          # 명령어가 끝날 때까지 대기
-          aws ssm wait command-executed \
-            --instance-id "${{ secrets.AWS_EC2_ID }}" \
-            --command-id "$COMMAND_ID"
-          
-          # 실행 결과를 터미널에 출력
-          aws ssm get-command-invocation \
-            --instance-id "${{ secrets.AWS_EC2_ID }}" \
-            --command-id "$COMMAND_ID" \
-            --query "{Status: Status, Output: StandardOutputContent, Error: StandardErrorContent}" \
-            --output json
+          aws ssm put-parameter \
+            --name "/my-app/image-tag" \
+            --value "${{ github.sha }}" \
+            --type String \
+            --overwrite
+
+      # AGS의 인스턴스 업데이트
+      - name: Start Instance Refresh
+        run: |
+          aws autoscaling start-instance-refresh \
+            --auto-scaling-group-name "${{ secrets.AWS_ASG_NAME }}"
