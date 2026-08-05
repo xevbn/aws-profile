@@ -68,6 +68,13 @@ MYSQL (AWS RDS)
 
 ![img.png](docs/docker.png)
 
+## LV. 5
+
+1. URL: https://api.xevbn.click/actuator/health
+2. Target Group Image
+
+## LV. 6
+
 ## 트러블슈팅
 
 ### 문제 사항 기술
@@ -92,3 +99,6 @@ ci/cd 테스트 중에 빌드 문제 발생
     - 빌드 옵션에 ARM64, AMD64 아키텍처 전부 가능하도록 설정
 4. 배포 과정에서 명령어 결과 확인 불가
    - CD에 명령어 추가
+5. ASG에서 지속적인 health check fail로 반복적인 scale in/out 발생
+   - 인스턴스가 채 다 올라오기 전에 health check를 함으로써 health check fail
+   - ASG 설정에 인스턴스 웜업 시간을 180->300으로 변경해 문제 해결
