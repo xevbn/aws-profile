@@ -109,6 +109,11 @@ jobs:
         run: |
           REFRESH_ID=$(aws autoscaling start-instance-refresh \
             --auto-scaling-group-name "${{ secrets.AWS_ASG_NAME }}" \
+            --preferences '{
+              "InstanceWarmup":300,
+              "MinHealthyPercentage":100,
+              "AutoRollback":true
+            }' \
             --query "InstanceRefreshId" \
             --output text)
 
