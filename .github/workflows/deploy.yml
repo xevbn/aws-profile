@@ -111,8 +111,7 @@ jobs:
             --auto-scaling-group-name "${{ secrets.AWS_ASG_NAME }}" \
             --preferences '{
               "InstanceWarmup":300,
-              "MinHealthyPercentage":100,
-              "AutoRollback":true
+              "MinHealthyPercentage":100
             }' \
             --query "InstanceRefreshId" \
             --output text)
