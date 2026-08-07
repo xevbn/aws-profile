@@ -1,5 +1,6 @@
 package com.example.awsprofile.domain.member.service;
 
+import com.example.awsprofile.domain.common.exception.MemberDeleteFailureException;
 import com.example.awsprofile.domain.common.exception.NotFoundException;
 import com.example.awsprofile.domain.member.dto.request.MemberCreateRequest;
 import com.example.awsprofile.domain.member.dto.response.MemberResponse;
@@ -54,6 +55,18 @@ public class MemberService {
         String key = found.getProfile();
 
         return new ProfileImageResponse(s3Service.download(key));
+    }
+
+    public void deleteMember(Long id) {
+        Member toDelete = getMember(id);
+
+        try {
+            s3Service.delete(toDelete.getProfile());
+        } catch (Exception ex) {
+            throw new MemberDeleteFailureException("멤버 삭제 중 오류가 발생했습니다.");
+        }
+
+        memberRepository.delete(toDelete);
     }
 
     private Member getMember(Long id) {

@@ -1,6 +1,5 @@
 package com.example.awsprofile.domain.common.exception;
 
-import io.awspring.cloud.s3.S3Exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,8 +33,8 @@ public class GlobalExceptionHandler {
                 .body(ErrorResponse.of(HttpStatus.NOT_FOUND, e.getMessage()));
     }
 
-    @ExceptionHandler(S3Exception.class)
-    public ResponseEntity<ErrorResponse> handleS3IOException(S3Exception e) {
+    @ExceptionHandler(S3CommunicationException.class)
+    public ResponseEntity<ErrorResponse> handleS3CommunicationException(S3CommunicationException e) {
         log.error("[ERROR]: {}", e.getMessage(), e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ErrorResponse.of(HttpStatus.INTERNAL_SERVER_ERROR, "S3 연동 오류"));
