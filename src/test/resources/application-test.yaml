@@ -1,10 +1,4 @@
 spring:
-  datasource:
-    # URL 끝에 ;MODE=MySQL 을 꼭 명시해야 engine=InnoDB 구문을 H2가 해석할 수 있습니다.
-    url: jdbc:h2:mem:testdb;MODE=MySQL;CASE_INSENSITIVE_IDENTIFIERS=TRUE
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
   servlet:
     multipart:
       max-file-size: 10MB
@@ -13,19 +7,20 @@ spring:
       region:
         static: ap-northeast-2
       s3:
-        bucket: dummy-bucket
-      credentials:
-        access-key: dummy
-        secret-key: dummy
+        bucket: test
+        endpoint: http://localhost:9000
+        path-style-access-enabled: true
 
   jpa:
     hibernate:
-      ddl-auto:
-    database-platform: org.hibernate.dialect.H2Dialect
+      ddl-auto: create-drop
     show-sql: true
     properties:
       hibernate:
         format_sql: true
+
+cloudfront:
+  domain: cloudfront.net
 
 logging:
   level:
