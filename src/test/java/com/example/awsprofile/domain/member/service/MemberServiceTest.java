@@ -104,7 +104,7 @@ public class MemberServiceTest {
         given(s3Service.upload(any())).willReturn("s3key");
 
         //when
-        service.saveProfile(1L, mockMultipartFile);
+        service.saveOrUpdateProfile(1L, mockMultipartFile);
 
         //then
         verify(memberRepository).save(any(Member.class));
@@ -112,28 +112,60 @@ public class MemberServiceTest {
     }
 
     @Test
+    @DisplayName("해당 멤버의 프로필을 변경한다 - s3 key를 수정한다")
+    void updateProfile_success() throws IOException {
+        //given
+        InputStream inputStream = new ByteArrayInputStream("test".getBytes());
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("file", inputStream);
+        given(memberRepository.findById(anyLong())).willReturn(Optional.of(member));
+        given(s3Service.upload(any())).willReturn("newS3key");
+
+        //when
+        service.saveOrUpdateProfile(1L, mockMultipartFile);
+
+        //then
+        verify(memberRepository).save(any(Member.class));
+        assertEquals("newS3key", member.getProfile());
+    }
+
+    @Test
     @DisplayName("파일 업로드 중 예외 발생")
-    void saveProfile_fail() throws IOException {
+    void saveProfile_fail() {
         //given
         given(memberRepository.findById(anyLong())).willReturn(Optional.of(member));
         given(s3Service.upload(any())).willThrow(new FileUploadException("S3 파일 업로드 중 오류가 발생했습니다. 파일명: file"));
 
         //when&then
-        assertThrows(FileUploadException.class, () -> service.saveProfile(1L, mock(MultipartFile.class)));
+        assertThrows(FileUploadException.class, () -> service.saveOrUpdateProfile(1L, mock(MultipartFile.class)));
     }
 
     @Test
     @DisplayName("해당 id의 멤버의 profile url을 얻어온다.")
-    void getProfileUrl_success() throws IOException {
+    void getProfileUrl_success() {
         //given
+        String domain = "cloudfront.net";
+        ReflectionTestUtils.setField(service, "domain", domain);
         member.saveProfile("key");
         given(memberRepository.findById(anyLong())).willReturn(Optional.of(member));
-        given(s3Service.download(anyString())).willReturn(new URL("http://s3-url"));
 
         //when
         ProfileImageResponse res = service.getProfileUrl(1L);
 
         //then
-        assertEquals("http://s3-url", res.profileImageURL().toString());
+        assertEquals("https://cloudfront.net/key", res.profileImageURL());
+    }
+
+    @Test
+    @DisplayName("해당 id의 멤버를 삭제한다")
+    void deleteMember_success() {
+        //given
+        given(memberRepository.findById(anyLong())).willReturn(Optional.of(member));
+
+        //when
+        service.deleteMember(1L);
+
+        //then
+        verify(s3Service).delete(any());
+        verify(memberRepository).delete(any(Member.class));
     }
 }

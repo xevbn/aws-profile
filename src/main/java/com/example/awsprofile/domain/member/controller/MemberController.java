@@ -33,11 +33,18 @@ public class MemberController {
         return ResponseEntity.ok(res);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteMember(@PathVariable long id) {
+        memberService.deleteMember(id);
+
+        return ResponseEntity.noContent().build();
+    }
+
     @PostMapping("/{id}/profile-image")
     public ResponseEntity<Void> saveProfileImage(@PathVariable long id, @RequestParam("file") MultipartFile file) {
-        memberService.saveProfile(id, file);
+        memberService.saveOrUpdateProfile(id, file);
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @GetMapping("/{id}/profile-image")

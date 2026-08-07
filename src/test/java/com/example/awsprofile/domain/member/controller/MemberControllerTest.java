@@ -4,6 +4,7 @@ import com.example.awsprofile.domain.member.dto.request.MemberCreateRequest;
 import com.example.awsprofile.domain.member.dto.response.MemberResponse;
 import com.example.awsprofile.domain.member.dto.response.ProfileImageResponse;
 import com.example.awsprofile.domain.member.service.MemberService;
+import com.example.awsprofile.domain.member.service.S3Service;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +21,9 @@ import java.io.InputStream;
 import java.net.URL;
 
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -82,20 +83,60 @@ public class MemberControllerTest {
         //when&then
         mockMvc.perform(multipart("/api/members/1/profile-image")
                         .file(mockMultipartFile))
-                .andExpect(status().isCreated());
+                .andExpect(status().isOk());
     }
 
     @Test
     @DisplayName("profile 이미지 다운로드 엔드포인트 테스트 - 성공")
     void api_members_GET_profile() throws Exception {
         //given
-        URL url = new URL("http://profile-image");
+        String url = "http://cloudfront/upload/image.png";
         given(memberService.getProfileUrl(anyLong()))
                 .willReturn(new ProfileImageResponse(url));
 
         //when&then
         mockMvc.perform(get("/api/members/1/profile-image"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.profileImageURL", is(url.toString())));
+                .andExpect(jsonPath("$.profileImageURL", is(url)));
+    }
+
+    @Test
+    @DisplayName("profile 이미지 업데이트 테스트 - 성공")
+    void api_members_POST_profile_update() throws Exception {
+        //given
+        InputStream inputStream = new ByteArrayInputStream("test".getBytes());
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("file", inputStream);
+        String url = "http://cloudfront/upload/image.png";
+        given(memberService.getProfileUrl(anyLong()))
+                .willReturn(new ProfileImageResponse(url));
+
+        //when&then
+        mockMvc.perform(multipart("/api/members/1/profile-image")
+                .file(mockMultipartFile))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("member 삭제 테스트 - 성공")
+    void api_members_DELETE_member() throws Exception {
+        //when&then
+        mockMvc.perform(delete("/api/members/1"))
+                .andExpect(status().isNoContent());
+        verify(memberService).deleteMember(anyLong());
+    }
+
+    @Test
+    @DisplayName("매핑 없는 url 테스트 - 400 bad request")
+    void api_url_not_found() throws Exception {
+        //when&then
+        mockMvc.perform(get("/api/asdf"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("잘못된 method 테스트 - 400 bad request")
+    void wrong_method_test() throws Exception {
+        mockMvc.perform(put("/api/members/1"))
+                .andExpect(status().isBadRequest());
     }
 }
