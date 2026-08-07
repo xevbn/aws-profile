@@ -27,3 +27,6 @@ spring:
 info:
   app:
     message: ${TEAM_NAME}
+
+cloudfront:
+  domain: ${CLOUDFRONT_DOMAIN}

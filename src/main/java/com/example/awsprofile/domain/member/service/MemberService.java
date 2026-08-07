@@ -8,14 +8,18 @@ import com.example.awsprofile.domain.member.dto.response.ProfileImageResponse;
 import com.example.awsprofile.domain.member.entity.Member;
 import com.example.awsprofile.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
     private final S3Service s3Service;
+    @Value("${cloudfront.domain}")
+    private String domain;
 
     public void createMember(MemberCreateRequest createRequest) {
         Member member = Member.create(
@@ -54,7 +58,17 @@ public class MemberService {
         Member found = getMember(id);
         String key = found.getProfile();
 
-        return new ProfileImageResponse(s3Service.download(key));
+        if(key == null) {
+            throw new NotFoundException("프로필 사진이 없습니다.");
+        }
+
+        String url = UriComponentsBuilder.newInstance()
+                .scheme("https")
+                .host(domain)
+                .path(key)
+                .toUriString();
+
+        return new ProfileImageResponse(url);
     }
 
     public void deleteMember(Long id) {

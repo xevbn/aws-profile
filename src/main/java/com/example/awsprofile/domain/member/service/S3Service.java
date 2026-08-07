@@ -16,8 +16,6 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class S3Service {
-    private static final Duration PRESIGNED_URL_EXPIRATION = Duration.ofDays(7);
-
     private final S3Template s3Template;
     @Value("${spring.cloud.aws.s3.bucket}")
     private String bucket;

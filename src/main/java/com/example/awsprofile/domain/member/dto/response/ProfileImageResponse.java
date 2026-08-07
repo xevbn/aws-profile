@@ -3,6 +3,6 @@ package com.example.awsprofile.domain.member.dto.response;
 import java.net.URL;
 
 public record ProfileImageResponse(
-        URL profileImageURL
+        String profileImageURL
 ) {
 }
