@@ -32,11 +32,19 @@ public class MemberService {
         return MemberResponse.from(found);
     }
 
-    public void saveProfile(Long id, MultipartFile file) {
+    public void saveOrUpdateProfile(Long id, MultipartFile file) {
         Member found = getMember(id);
 
-        String key = s3Service.upload(file);
-        found.saveProfile(key);
+        if(found.getProfile() == null) {
+            String key = s3Service.upload(file);
+            found.saveProfile(key);
+        } else {
+            String oldKey = found.getProfile();
+            s3Service.delete(oldKey);
+
+            String newKey = s3Service.upload(file);
+            found.saveProfile(newKey);
+        }
 
         memberRepository.save(found);
     }
